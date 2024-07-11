@@ -233,4 +233,64 @@ unknownsensor unknown-1
       'unknown-1': 'unknown',
     });
   });
+
+  it('should handle logs with no sensors defined', async () => {
+    const log = `reference 70.0 45.0 6`;
+
+    const nextReq = new NextRequest('http://localhost/api/quality-control', {
+      method: 'POST',
+      headers: {
+        'content-type': 'text/plain',
+      },
+      body: log,
+    });
+
+    const nextRes = await POST(nextReq);
+    const json = await nextRes.json();
+
+    expect(nextRes.status).toBe(200);
+    expect(json).toEqual({});
+  });
+
+  it('should handle logs with no data for humidity sensor', async () => {
+    const log = `reference 70.0 45.0 6
+humidity hum-6`;
+
+    const nextReq = new NextRequest('http://localhost/api/quality-control', {
+      method: 'POST',
+      headers: {
+        'content-type': 'text/plain',
+      },
+      body: log,
+    });
+
+    const nextRes = await POST(nextReq);
+    const json = await nextRes.json();
+
+    expect(nextRes.status).toBe(200);
+    expect(json).toEqual({
+      'hum-6': 'unknown',
+    });
+  });
+
+  it('should handle logs with no data for monoxide sensor', async () => {
+    const log = `reference 70.0 45.0 6
+monoxide mon-6`;
+
+    const nextReq = new NextRequest('http://localhost/api/quality-control', {
+      method: 'POST',
+      headers: {
+        'content-type': 'text/plain',
+      },
+      body: log,
+    });
+
+    const nextRes = await POST(nextReq);
+    const json = await nextRes.json();
+
+    expect(nextRes.status).toBe(200);
+    expect(json).toEqual({
+      'mon-6': 'unknown',
+    });
+  });
 });
